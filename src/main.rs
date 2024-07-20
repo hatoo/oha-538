@@ -13,6 +13,8 @@ use tokio::net::TcpStream;
 #[derive(Debug, Parser)]
 struct Opts {
     uri: Uri,
+    #[clap(short)]
+    n: usize,
 }
 
 #[tokio::main]
@@ -42,7 +44,7 @@ async fn main() -> anyhow::Result<()> {
     let (mut send_request, conn) = builder.handshake(TokioIo::new(tls)).await?;
     tokio::spawn(conn);
 
-    for _ in 0..100 {
+    for _ in 0..opts.n {
         let req = hyper::http::Request::builder()
             .method(Method::GET)
             .uri(uri.clone())
